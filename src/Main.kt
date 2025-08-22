@@ -8,7 +8,7 @@ fun main() {
 
     val itensMenu = mutableListOf<ItemMenu>()
     val pedidos = mutableListOf<Pedido>()
-    var opcao = -1
+    var running = true
 
     var countItem = 1
     var countPedido = 1
@@ -19,7 +19,7 @@ fun main() {
     println("=== London Restaurant ===")
     println("=========================\n")
 
-    while (opcao != 0) {
+    do {
         println("MENU PRINCIPAL")
         println("1. Cadastrar Item")
         println("2. Atualizar Item")
@@ -29,7 +29,7 @@ fun main() {
         println("0. Sair\n")
 
         print("Escolha uma opção: ")
-        opcao = readln().toInt()
+        var opcao = readln().toInt()
 
         when(opcao){
             1 -> {
@@ -138,7 +138,9 @@ fun main() {
             }
 
             3 -> {
-                println("Criação de pedido")
+                println("\n========================")
+                println("=== Criação de Pedido ===")
+                println("========================\n")
 
                 val pedido = Pedido (
                     codigo = countPedido,
@@ -148,10 +150,9 @@ fun main() {
                     status = StatusPedido.ACEITO
                 )
                 countPedido++
-                var adicionandoItens = true
 
-                //Adicionar Itens
-                while (adicionandoItens){
+                var adicionandoItens = true
+                do{
                     println("Itens disponíveis:\n")
                     for(item in itensMenu){
                         if(item.estoque >= 1){
@@ -162,72 +163,58 @@ fun main() {
                                     "Estoque: ${item.estoque}\n\n")
                         }
                     }
-                    println("Digite o código do item que você deseja adicionar: ")
+                    print("Digite o código do item que você deseja adicionar: ")
                     val codigoEscolhido = readln().toInt()
 
-                    var itemCadastrado = false
-                    for(item in itensMenu){
-                        if(item.codigo == codigoEscolhido) {
-                            itemCadastrado = true
-                            println("Digite a quantidade do item: ")
-                            val qtdItem = readln().toInt()
-                            if (qtdItem > item.estoque) {
-                                println("Não há essa quantidade de item no estoque")
-                            } else {
-                                val novoItem = ItemPedido(
-                                    item = item,
-                                    qtd = qtdItem
-                                )
-                                pedido.itens.add(novoItem)
-                                pedido.totalPedido += (novoItem.qtd * novoItem.item.preco)
-                                item.estoque -= qtdItem
-                            }
-                            println("Itens já selecionados: \n")
-                            for(itemPedido in pedido.itens){
-                                    println(
-                                            "Nome: ${itemPedido.item.nome}\n" +
-                                            "Quantidade: ${itemPedido.qtd}\n")
-                            }
-                            print("Valor Total da Compra: R$${pedido.totalPedido}\n")
-                            break
+                    val item = itensMenu.find { it.codigo == codigoEscolhido }
+                    if (item != null && item.estoque != 0){
+                        print("Digite a quantidade do item: ")
+                        val qtdItem = readln().toInt()
+                        if (qtdItem > item.estoque) {
+                            println("Não há essa quantidade de item no estoque")
+                        } else {
+                            val novoItem = ItemPedido(
+                                item = item,
+                                qtd = qtdItem
+                            )
+                            pedido.itens.add(novoItem)
+                            pedido.totalPedido += (novoItem.qtd * novoItem.item.preco)
+                            item.estoque -= qtdItem
                         }
-                    }
+                    } else if (item != null && item.estoque == 0) {
+                        println("Item sem estoque")}
+                    else {
+                        println("Item com código ${codigoEscolhido} não encontrado.\n")}
 
-                    if (!itemCadastrado) {
-                        println("Item com código ${codigoEscolhido} não encontrado.\n")
+                    println("Itens já selecionados: \n")
+                    pedido.itens.forEach{ itemPedido ->
+                        println("Nome: ${itemPedido.item.nome}\n" + "Quantidade: ${itemPedido.qtd}\n")
                     }
+                    println("Subtotal: R$${pedido.totalPedido}")
+
 
                     print("Deseja adicionar mais itens (s/n)? ")
-                    val adicionarItem = readln()[0]
-                    if (adicionarItem == 'n') {
+                    val adicionarItem = readln()[0].lowercase()
+                    if (adicionarItem == "n") {
                         adicionandoItens = false
                     }
-                }
-                println("Pedido:\n")
-                for(itemPedido in pedido.itens){
-                    println("Nome: ${itemPedido.item.nome}\n" +
-                            "Quantidade: ${itemPedido.qtd}\n")
-                }
-                println("Subtotal: R$${pedido.totalPedido}\n")
+                } while(adicionandoItens)
 
-                println("Deseja adicionar cupom de 15%?(s/n)")
-                val cupom = readln()[0]
-                if (cupom == 's'){
+                print("Deseja adicionar cupom de 15%?(s/n)")
+                val cupom = readln()[0].lowercase()
+                if (cupom == "s"){
                     pedido.cupom = true
                     pedido.totalPedido = pedido.totalPedido - (pedido.totalPedido * 0.15)
                 }
 
-                println("Pedido confirmado: ")
-                for(itemPedido in pedido.itens){
+                println("\nPedido confirmado!")
+                pedido.itens.forEach { itemPedido ->
                     println("Nome: ${itemPedido.item.nome}\n" +
                             "Quantidade: ${itemPedido.qtd}\n")
                 }
                 println("Status: ${pedido.status}\n" + "Total: R$${pedido.totalPedido}\n")
 
                 pedidos.add(pedido)
-
-                println(pedidos)
-
             }
 
             4 -> {
@@ -289,13 +276,12 @@ fun main() {
 
             }
             0 -> {
-                println("Saindo ...")
-                break
+                println("Saindo...")
+                running = false
             }
-
             else -> {
                 println("Opção invalida! Tente novamente")
             }
         }
-    }
+    } while(running)
 }
