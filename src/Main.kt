@@ -38,19 +38,19 @@ fun main() {
 
             1 -> {
                 println("\n═══════════════════════════════════════")
-                println("           CADASTRAR ITEM NO MENU       ")
+                println("         CADASTRAR ITEM NO MENU       ")
                   println("═══════════════════════════════════════")
 
                 print("\nNome do item: ")
                 val nomeDoItem = readln()
 
-                print("\nDescrição do item: ")
+                print("Descrição do item: ")
                 val descricaoDoItem = readln()
 
-                print("\nPreço do item (R$): ")
+                print("Preço do item (R$): ")
                 val precoDoItem = readln().toDouble()
 
-                print("\nQuantidade em estoque: ")
+                print("Quantidade em estoque: ")
                 val quantidadeEmEstoque = readln().toInt()
 
                 val novoItemMenu = ItemMenu(
@@ -78,8 +78,8 @@ fun main() {
                 println("         ATUALIZAR ITEM DO MENU        ")
                   println("═══════════════════════════════════════")
 
-                println("\nItens disponíveis no menu:")
-                println("┌─────────────────────────────────────────┐")
+                    println("\nItens disponíveis no menu:")
+                    println("┌─────────────────────────────────────────┐")
                 for (itemAtual in listaItensMenu) {
                     println("│ Código: ${itemAtual.codigo}")
                     println("│ Nome: ${itemAtual.nome}")
@@ -88,7 +88,7 @@ fun main() {
                     println("│ Estoque: ${itemAtual.estoque} unidades")
                     println("├─────────────────────────────────────────┤")
                 }
-                println("└─────────────────────────────────────────┘")
+                    println("└─────────────────────────────────────────┘")
 
                 println("\nDigite o código do item que deseja atualizar: ")
                 val codigoItemEscolhido = readln().toInt()
